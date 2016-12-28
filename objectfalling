@@ -1,0 +1,28 @@
+clear all
+clc
+
+// Constants
+dt = 0.002;
+k = 10.0; 
+g = 10; 
+m = 2.0; 
+N = 1000; 
+
+t = [0:dt:(N-1)*dt]
+X = zeros(N,1)
+V = zeros(N,1)
+
+for iter = 2:N
+    X(iter) = X(iter-1) + V(iter-1)*dt
+    V(iter) = V(iter-1) - (k*V(iter-1)/m+g)*dt
+end
+
+figure(1)
+plot(t,X,'r',t,V,'b')
+legend('X','V')
+
+
+
+
+
+
