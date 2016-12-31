@@ -30,11 +30,11 @@ m = 1.0;
 N = 200;
 
 // Measurement noise variance
-MNstd = 0.4;
+MNstd = 0.3;
 MNV = MNstd*MNstd;
 
 // Process noise variance
-PNstd = 0.02;
+PNstd = 0.1;
 PNV = PNstd*PNstd;
 
 s = zeros(N,1)
@@ -69,10 +69,13 @@ s.z = zeros(2,1);
 
 // Simulate falling in air, and watch the  filter track it
 tru = zeros(N,2)
+theo = zeros(N,2)
 tru(1,:) = [x0 v0];
+theo(1,:) = [x0 v0];
 detP(1,:) = s.detP;
 
 for iter = 2:N
+    theo(iter,:) = (s(iter-1).A*theo(iter-1,:)'+s(iter-1).B*s(iter-1).u)';
     tru(iter,:) = (s(iter-1).A*tru(iter-1,:)'+s(iter-1).B*s(iter-1).u+PNstd*rand(2,1,'normal'))';
     s(iter-1).z = s(iter-1).H * tru(iter,:)' + MNstd*rand(2,1,'normal'); // create a meas.
     s(iter) = kalmanf(s(iter-1));  // perform a Kalman filter iteration
@@ -88,8 +91,8 @@ for iter = 1:N
 end
 
 figure(1)
-plot(t,tru(:,1),t,xvec,t,zvec,'*')
-legend('true','Kalman filtered','real')
+plot(t,tru(:,1),t,xvec,t,zvec,'*',t,theo(:,1))
+legend('true','Kalman filtered','real','theory')
 
 
 
